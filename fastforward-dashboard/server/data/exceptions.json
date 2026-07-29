@@ -1,1 +1,233 @@
-[]
+[
+  {
+    "id": "EXC-0042",
+    "shipmentId": "FF-2026-04356",
+    "type": "weather-delay",
+    "severity": "high",
+    "status": "in-progress",
+    "region": "West",
+    "createdAt": "2026-07-17T18:10:05.742Z",
+    "description": "Weather advisory and road conditions are slowing scheduled linehaul movement",
+    "assignedTo": "Trevor Blake"
+  },
+  {
+    "id": "EXC-0043",
+    "shipmentId": "FF-2026-04400",
+    "type": "carrier-issue",
+    "severity": "critical",
+    "status": "open",
+    "region": "Southwest",
+    "createdAt": "2026-07-17T00:14:03.397Z",
+    "description": "Carrier equipment reassignment caused missed handoff at transfer hub",
+    "assignedTo": "Samir Das"
+  },
+  {
+    "id": "EXC-0044",
+    "shipmentId": "FF-2026-04310",
+    "type": "damaged",
+    "severity": "critical",
+    "status": "open",
+    "region": "Southeast",
+    "createdAt": "2026-07-21T17:12:49.927Z",
+    "description": "Dock inspection reported pallet wrap damage and requires claims verification",
+    "assignedTo": "Priya Nair"
+  },
+  {
+    "id": "EXC-0045",
+    "shipmentId": "FF-2026-04351",
+    "type": "customs-hold",
+    "severity": "high",
+    "status": "in-progress",
+    "region": "Midwest",
+    "createdAt": "2026-07-20T19:49:20.492Z",
+    "description": "Cross-border paperwork discrepancy requires compliance review before release",
+    "assignedTo": "Hannah Kim"
+  },
+  {
+    "id": "EXC-0046",
+    "shipmentId": "FF-2026-04262",
+    "type": "carrier-issue",
+    "severity": "low",
+    "status": "resolved",
+    "region": "Northeast",
+    "createdAt": "2026-07-28T07:05:00.095Z",
+    "description": "Carrier equipment reassignment caused missed handoff at transfer hub",
+    "assignedTo": "Samir Das"
+  },
+  {
+    "id": "EXC-0047",
+    "shipmentId": "FF-2026-04335",
+    "type": "carrier-issue",
+    "severity": "high",
+    "status": "open",
+    "region": "Midwest",
+    "createdAt": "2026-07-03T03:19:34.723Z",
+    "description": "Carrier equipment reassignment caused missed handoff at transfer hub",
+    "assignedTo": "Samir Das"
+  },
+  {
+    "id": "EXC-0048",
+    "shipmentId": "FF-2026-04300",
+    "type": "address-error",
+    "severity": "low",
+    "status": "resolved",
+    "region": "Southeast",
+    "createdAt": "2026-07-08T14:43:37.826Z",
+    "description": "Final destination address mismatch detected and awaiting customer correction",
+    "assignedTo": "Olivia Harper"
+  },
+  {
+    "id": "EXC-0049",
+    "shipmentId": "FF-2026-04402",
+    "type": "weather-delay",
+    "severity": "low",
+    "status": "in-progress",
+    "region": "Southwest",
+    "createdAt": "2026-07-19T23:14:11.408Z",
+    "description": "Weather advisory and road conditions are slowing scheduled linehaul movement",
+    "assignedTo": "Trevor Blake"
+  },
+  {
+    "id": "EXC-0050",
+    "shipmentId": "FF-2026-04360",
+    "type": "weather-delay",
+    "severity": "high",
+    "status": "open",
+    "region": "West",
+    "createdAt": "2026-07-27T09:43:00.870Z",
+    "description": "Weather advisory and road conditions are slowing scheduled linehaul movement",
+    "assignedTo": "Darius Cole"
+  },
+  {
+    "id": "EXC-0051",
+    "shipmentId": "FF-2026-04382",
+    "type": "damaged",
+    "severity": "low",
+    "status": "in-progress",
+    "region": "West",
+    "createdAt": "2026-07-06T06:28:28.678Z",
+    "description": "Dock inspection reported pallet wrap damage and requires claims verification",
+    "assignedTo": "Trevor Blake"
+  },
+  {
+    "id": "EXC-0052",
+    "shipmentId": "FF-2026-04238",
+    "type": "weather-delay",
+    "severity": "medium",
+    "status": "open",
+    "region": "Northeast",
+    "createdAt": "2026-07-17T18:23:44.178Z",
+    "description": "Weather advisory and road conditions are slowing scheduled linehaul movement",
+    "assignedTo": "Marcus Johnson"
+  },
+  {
+    "id": "EXC-0053",
+    "shipmentId": "FF-2026-04354",
+    "type": "carrier-issue",
+    "severity": "high",
+    "status": "open",
+    "region": "Midwest",
+    "createdAt": "2026-07-07T20:38:57.765Z",
+    "description": "Carrier equipment reassignment caused missed handoff at transfer hub",
+    "assignedTo": "Hannah Kim"
+  },
+  {
+    "id": "EXC-0054",
+    "shipmentId": "FF-2026-04247",
+    "type": "weather-delay",
+    "severity": "low",
+    "status": "resolved",
+    "region": "Northeast",
+    "createdAt": "2026-07-25T06:14:36.439Z",
+    "description": "Weather advisory and road conditions are slowing scheduled linehaul movement",
+    "assignedTo": "Marcus Johnson"
+  },
+  {
+    "id": "EXC-0055",
+    "shipmentId": "FF-2026-04348",
+    "type": "carrier-issue",
+    "severity": "critical",
+    "status": "open",
+    "region": "Midwest",
+    "createdAt": "2026-07-29T05:36:40.793Z",
+    "description": "Carrier equipment reassignment caused missed handoff at transfer hub",
+    "assignedTo": "Priya Nair"
+  },
+  {
+    "id": "EXC-0056",
+    "shipmentId": "FF-2026-04392",
+    "type": "address-error",
+    "severity": "high",
+    "status": "open",
+    "region": "Southwest",
+    "createdAt": "2026-07-29T10:04:11.094Z",
+    "description": "Final destination address mismatch detected and awaiting customer correction",
+    "assignedTo": "Darius Cole"
+  },
+  {
+    "id": "EXC-0057",
+    "shipmentId": "FF-2026-04385",
+    "type": "address-error",
+    "severity": "low",
+    "status": "resolved",
+    "region": "West",
+    "createdAt": "2026-07-09T16:41:12.393Z",
+    "description": "Final destination address mismatch detected and awaiting customer correction",
+    "assignedTo": "Marcus Johnson"
+  },
+  {
+    "id": "EXC-0058",
+    "shipmentId": "FF-2026-04293",
+    "type": "carrier-issue",
+    "severity": "low",
+    "status": "resolved",
+    "region": "Southeast",
+    "createdAt": "2026-07-12T01:43:11.630Z",
+    "description": "Carrier equipment reassignment caused missed handoff at transfer hub",
+    "assignedTo": "Trevor Blake"
+  },
+  {
+    "id": "EXC-0059",
+    "shipmentId": "FF-2026-04345",
+    "type": "address-error",
+    "severity": "medium",
+    "status": "open",
+    "region": "Midwest",
+    "createdAt": "2026-07-05T20:29:07.584Z",
+    "description": "Final destination address mismatch detected and awaiting customer correction",
+    "assignedTo": "Samir Das"
+  },
+  {
+    "id": "EXC-0060",
+    "shipmentId": "FF-2026-04257",
+    "type": "weather-delay",
+    "severity": "medium",
+    "status": "open",
+    "region": "Northeast",
+    "createdAt": "2026-07-20T15:57:28.004Z",
+    "description": "Weather advisory and road conditions are slowing scheduled linehaul movement",
+    "assignedTo": "Olivia Harper"
+  },
+  {
+    "id": "EXC-0061",
+    "shipmentId": "FF-2026-04281",
+    "type": "damaged",
+    "severity": "high",
+    "status": "in-progress",
+    "region": "Southeast",
+    "createdAt": "2026-07-01T04:29:01.815Z",
+    "description": "Dock inspection reported pallet wrap damage and requires claims verification",
+    "assignedTo": "Monica Reed"
+  },
+  {
+    "id": "EXC-0062",
+    "shipmentId": "FF-2026-04301",
+    "type": "customs-hold",
+    "severity": "low",
+    "status": "in-progress",
+    "region": "Southeast",
+    "createdAt": "2026-07-12T06:28:07.734Z",
+    "description": "Cross-border paperwork discrepancy requires compliance review before release",
+    "assignedTo": "Marcus Johnson"
+  }
+]

@@ -1,1 +1,42 @@
-[]
+[
+  {
+    "id": "northeast",
+    "name": "Northeast",
+    "totalShipments": 45,
+    "onTimeRate": 86.1,
+    "avgTransitDays": 2.1,
+    "openExceptions": 2
+  },
+  {
+    "id": "southeast",
+    "name": "Southeast",
+    "totalShipments": 50,
+    "onTimeRate": 87.5,
+    "avgTransitDays": 2.3,
+    "openExceptions": 3
+  },
+  {
+    "id": "midwest",
+    "name": "Midwest",
+    "totalShipments": 42,
+    "onTimeRate": 69.7,
+    "avgTransitDays": 1.8,
+    "openExceptions": 5
+  },
+  {
+    "id": "west",
+    "name": "West",
+    "totalShipments": 35,
+    "onTimeRate": 88.5,
+    "avgTransitDays": 3.3,
+    "openExceptions": 3
+  },
+  {
+    "id": "southwest",
+    "name": "Southwest",
+    "totalShipments": 28,
+    "onTimeRate": 78.9,
+    "avgTransitDays": 3,
+    "openExceptions": 3
+  }
+]
