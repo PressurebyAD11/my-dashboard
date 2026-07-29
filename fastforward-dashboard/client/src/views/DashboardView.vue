@@ -1,6 +1,8 @@
 <template>
   <DashboardLayout>
     <section>
+      <FiltersBar @filters-change="onFiltersChange" @reset-filters="onFiltersReset" />
+
       <KpiCards :metrics="kpiMetrics" :trends="kpiTrends" @card-click="onKpiCardClick" />
 
       <div class="mt-6 d-flex flex-column ga-4">
@@ -22,9 +24,16 @@
 </template>
 
 <script setup>
-import { nextTick } from 'vue';
+import { nextTick, ref } from 'vue';
 import DashboardLayout from '../layouts/DashboardLayout.vue';
+import FiltersBar from '../components/FiltersBar.vue';
 import KpiCards from '../components/KpiCards.vue';
+
+const activeFilters = ref({
+  dateRange: 30,
+  region: 'all',
+  exceptionStatus: 'all',
+});
 
 const kpiMetrics = {
   totalShipments: 1284,
@@ -45,6 +54,14 @@ async function onKpiCardClick(payload) {
   const target = document.getElementById(payload.section);
   if (!target) return;
   target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function onFiltersChange(filters) {
+  activeFilters.value = filters;
+}
+
+function onFiltersReset(filters) {
+  activeFilters.value = filters;
 }
 </script>
 
