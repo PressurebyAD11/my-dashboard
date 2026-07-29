@@ -1,0 +1,17 @@
+{
+  "name": "fastforward-dashboard",
+  "private": true,
+  "version": "0.0.1",
+  "workspaces": [
+    "client"
+  ],
+  "scripts": {
+    "dev:client": "npm --prefix client run dev",
+    "build:client": "npm --prefix client run build",
+    "start:server": "node server/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}
