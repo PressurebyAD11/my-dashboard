@@ -20,7 +20,11 @@
           />
         </section>
         <section id="openExceptions-section" class="drilldown-anchor">
-          <h2 class="text-h6">Open Exceptions</h2>
+          <ExceptionsPanel
+            :exceptions="exceptionRows"
+            :filters="activeFilters"
+            @reset-request="resetFiltersToDefault"
+          />
         </section>
       </div>
     </section>
@@ -35,6 +39,7 @@ import KpiCards from '../components/KpiCards.vue';
 import ShipmentVolumeChart from '../components/ShipmentVolumeChart.vue';
 import OnTimeDeliveryChart from '../components/OnTimeDeliveryChart.vue';
 import RegionalPerformanceTable from '../components/RegionalPerformanceTable.vue';
+import ExceptionsPanel from '../components/ExceptionsPanel.vue';
 
 const activeFilters = ref({
   dateRange: 30,
@@ -69,6 +74,14 @@ function onFiltersChange(filters) {
 
 function onFiltersReset(filters) {
   activeFilters.value = filters;
+}
+
+function resetFiltersToDefault() {
+  activeFilters.value = {
+    dateRange: 30,
+    region: 'all',
+    exceptionStatus: 'all',
+  };
 }
 
 function onRegionRowClick(region) {
@@ -136,6 +149,111 @@ const regionalRows = computed(() => {
     { id: 'midwest', name: 'Midwest', totalShipments: 234, onTimeRate: 89.8, avgTransitDays: 2.0, openExceptions: 4 },
     { id: 'west', name: 'West', totalShipments: 298, onTimeRate: 90.6, avgTransitDays: 3.1, openExceptions: 6 },
     { id: 'southwest', name: 'Southwest', totalShipments: 245, onTimeRate: 88.1, avgTransitDays: 2.9, openExceptions: 5 },
+  ];
+});
+
+const exceptionRows = computed(() => {
+  return [
+    {
+      id: 'EXC-0042',
+      shipmentId: 'FF-2026-04356',
+      type: 'weather-delay',
+      severity: 'high',
+      status: 'in-progress',
+      region: 'West',
+      assignedTo: 'Trevor Blake',
+      createdAt: '2026-07-17T18:10:05.742Z',
+    },
+    {
+      id: 'EXC-0043',
+      shipmentId: 'FF-2026-04400',
+      type: 'carrier-issue',
+      severity: 'critical',
+      status: 'open',
+      region: 'Southwest',
+      assignedTo: 'Samir Das',
+      createdAt: '2026-07-17T00:14:03.397Z',
+    },
+    {
+      id: 'EXC-0044',
+      shipmentId: 'FF-2026-04310',
+      type: 'damaged',
+      severity: 'critical',
+      status: 'open',
+      region: 'Southeast',
+      assignedTo: 'Priya Nair',
+      createdAt: '2026-07-21T17:12:49.927Z',
+    },
+    {
+      id: 'EXC-0045',
+      shipmentId: 'FF-2026-04351',
+      type: 'customs-hold',
+      severity: 'high',
+      status: 'in-progress',
+      region: 'Midwest',
+      assignedTo: 'Hannah Kim',
+      createdAt: '2026-07-20T19:49:20.492Z',
+    },
+    {
+      id: 'EXC-0046',
+      shipmentId: 'FF-2026-04262',
+      type: 'carrier-issue',
+      severity: 'low',
+      status: 'resolved',
+      region: 'Northeast',
+      assignedTo: 'Samir Das',
+      createdAt: '2026-07-28T07:05:00.095Z',
+    },
+    {
+      id: 'EXC-0050',
+      shipmentId: 'FF-2026-04360',
+      type: 'weather-delay',
+      severity: 'high',
+      status: 'open',
+      region: 'West',
+      assignedTo: 'Darius Cole',
+      createdAt: '2026-07-27T09:43:00.870Z',
+    },
+    {
+      id: 'EXC-0052',
+      shipmentId: 'FF-2026-04238',
+      type: 'weather-delay',
+      severity: 'medium',
+      status: 'open',
+      region: 'Northeast',
+      assignedTo: 'Marcus Johnson',
+      createdAt: '2026-07-17T18:23:44.178Z',
+    },
+    {
+      id: 'EXC-0055',
+      shipmentId: 'FF-2026-04348',
+      type: 'carrier-issue',
+      severity: 'critical',
+      status: 'open',
+      region: 'Midwest',
+      assignedTo: 'Priya Nair',
+      createdAt: '2026-07-29T05:36:40.793Z',
+    },
+    {
+      id: 'EXC-0056',
+      shipmentId: 'FF-2026-04392',
+      type: 'address-error',
+      severity: 'high',
+      status: 'open',
+      region: 'Southwest',
+      assignedTo: 'Darius Cole',
+      createdAt: '2026-07-29T10:04:11.094Z',
+    },
+    {
+      id: 'EXC-0062',
+      shipmentId: 'FF-2026-04301',
+      type: 'customs-hold',
+      severity: 'low',
+      status: 'in-progress',
+      region: 'Southeast',
+      assignedTo: 'Marcus Johnson',
+      createdAt: '2026-07-12T06:28:07.734Z',
+    },
   ];
 });
 </script>
