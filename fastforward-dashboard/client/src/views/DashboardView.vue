@@ -1,6 +1,9 @@
 <template>
   <DashboardLayout>
-    <section class="d-flex flex-column ga-4">
+    <section
+      class="d-flex flex-column ga-4 dashboard-content"
+      :class="{ 'is-filter-transitioning': isFilterTransitioning }"
+    >
       <FiltersBar
         :initial-filters="uiFilters"
         @filters-change="onFiltersChange"
@@ -12,6 +15,7 @@
         type="error"
         variant="tonal"
         density="comfortable"
+        aria-live="assertive"
       >
         {{ error }}
       </v-alert>
@@ -19,7 +23,7 @@
       <v-skeleton-loader
         v-if="loading"
         type="card, card, card"
-        class="mb-1"
+        class="mb-1 dashboard-skeleton"
       />
       <KpiCards
         v-else
@@ -28,10 +32,11 @@
       />
 
       <v-row dense class="mt-1">
-        <v-col cols="12" lg="6">
+        <v-col cols="12" md="6" lg="6">
           <v-skeleton-loader
             v-if="loading"
             type="heading, text, image"
+            class="dashboard-skeleton chart-skeleton"
           />
           <ShipmentVolumeChart
             v-else
@@ -40,10 +45,11 @@
           />
         </v-col>
 
-        <v-col cols="12" lg="6">
+        <v-col cols="12" md="6" lg="6">
           <v-skeleton-loader
             v-if="loading"
             type="heading, text, image"
+            class="dashboard-skeleton chart-skeleton"
           />
           <OnTimeDeliveryChart
             v-else
@@ -54,10 +60,11 @@
       </v-row>
 
       <v-row dense>
-        <v-col cols="12" lg="7">
+        <v-col cols="12" xl="7">
           <v-skeleton-loader
             v-if="loading"
             type="heading, table"
+            class="dashboard-skeleton"
           />
           <RegionalPerformanceTable
             v-else
@@ -67,10 +74,11 @@
           />
         </v-col>
 
-        <v-col cols="12" lg="5">
+        <v-col cols="12" xl="5">
           <v-skeleton-loader
             v-if="loading"
             type="heading, table"
+            class="dashboard-skeleton"
           />
           <ExceptionsPanel
             v-else
@@ -85,7 +93,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import DashboardLayout from '../layouts/DashboardLayout.vue';
 import FiltersBar from '../components/FiltersBar.vue';
 import KpiCards from '../components/KpiCards.vue';
@@ -117,6 +125,59 @@ const uiFilters = computed(() => ({
   region: filters.region || 'all',
   exceptionStatus: filters.exceptionStatus || 'all',
 }));
+
+const isFilterTransitioning = ref(false);
+const prefersReducedMotion = ref(false);
+let transitionTimer = null;
+let mediaQueryList = null;
+
+function handleMotionPreferenceChange(event) {
+  prefersReducedMotion.value = event.matches;
+}
+
+onMounted(() => {
+  mediaQueryList = window.matchMedia('(prefers-reduced-motion: reduce)');
+  prefersReducedMotion.value = mediaQueryList.matches;
+
+  if (mediaQueryList.addEventListener) {
+    mediaQueryList.addEventListener('change', handleMotionPreferenceChange);
+    return;
+  }
+
+  mediaQueryList.addListener(handleMotionPreferenceChange);
+});
+
+watch(uiFilters, () => {
+  if (prefersReducedMotion.value) {
+    isFilterTransitioning.value = false;
+    return;
+  }
+
+  if (transitionTimer) {
+    clearTimeout(transitionTimer);
+  }
+
+  isFilterTransitioning.value = true;
+  transitionTimer = setTimeout(() => {
+    isFilterTransitioning.value = false;
+    transitionTimer = null;
+  }, 220);
+}, { deep: true });
+
+onBeforeUnmount(() => {
+  if (transitionTimer) {
+    clearTimeout(transitionTimer);
+  }
+
+  if (!mediaQueryList) return;
+
+  if (mediaQueryList.removeEventListener) {
+    mediaQueryList.removeEventListener('change', handleMotionPreferenceChange);
+    return;
+  }
+
+  mediaQueryList.removeListener(handleMotionPreferenceChange);
+});
 
 function onFiltersChange(nextFilters) {
   if (Number(nextFilters.dateRange) !== Number(uiFilters.value.dateRange)) {
@@ -217,3 +278,34 @@ const kpiMetrics = computed(() => ({
   openExceptions: Number(kpis.value?.openExceptions || 0),
 }));
 </script>
+
+<style scoped>
+.dashboard-content {
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.is-filter-transitioning {
+  opacity: 0.985;
+  transform: translateY(1px);
+}
+
+.dashboard-skeleton {
+  border-radius: 14px;
+}
+
+.chart-skeleton {
+  min-height: 320px;
+}
+
+@media (max-width: 959px) {
+  .chart-skeleton {
+    min-height: 260px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-content {
+    transition: none;
+  }
+}
+</style>

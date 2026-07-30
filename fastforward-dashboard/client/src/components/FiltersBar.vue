@@ -1,10 +1,15 @@
 <template>
-  <v-card rounded="lg" elevation="1" class="mb-4">
+  <v-card rounded="lg" elevation="1" class="mb-4 filter-card">
     <v-card-text class="pa-4">
       <v-row class="align-center" dense>
-        <v-col cols="12" md="5">
+        <v-col cols="12" lg="5">
           <div class="text-caption text-medium-emphasis mb-2">Date Range</div>
-          <v-chip-group v-model="dateRange" mandatory selected-class="text-primary">
+          <v-chip-group
+            v-model="dateRange"
+            mandatory
+            selected-class="text-primary"
+            aria-label="Date range filter"
+          >
             <v-chip
               v-for="option in dateRangeOptions"
               :key="option.value"
@@ -18,37 +23,41 @@
           </v-chip-group>
         </v-col>
 
-        <v-col cols="12" sm="6" md="3">
+        <v-col cols="12" sm="6" lg="3">
           <v-select
             v-model="region"
             :items="regionOptions"
             item-title="label"
             item-value="value"
             label="Region"
+            aria-label="Region filter"
             variant="outlined"
             density="comfortable"
             hide-details
           />
         </v-col>
 
-        <v-col cols="12" sm="6" md="3">
+        <v-col cols="12" sm="6" lg="3">
           <v-select
             v-model="exceptionStatus"
             :items="exceptionStatusOptions"
             item-title="label"
             item-value="value"
             label="Exception Status"
+            aria-label="Exception status filter"
             variant="outlined"
             density="comfortable"
             hide-details
           />
         </v-col>
 
-        <v-col cols="12" md="1" class="d-flex justify-md-end">
+        <v-col cols="12" lg="1" class="d-flex justify-lg-end">
           <v-btn
             variant="text"
             color="secondary"
             prepend-icon="mdi-refresh"
+            class="reset-btn"
+            aria-label="Reset all dashboard filters"
             @click="resetFilters"
           >
             Reset Filters
@@ -137,3 +146,23 @@ watch(
   { deep: true }
 );
 </script>
+
+<style scoped>
+.filter-card {
+  transition: box-shadow 0.2s ease;
+}
+
+.filter-card:focus-within {
+  box-shadow: 0 0 0 2px rgba(27, 42, 74, 0.18);
+}
+
+.reset-btn {
+  width: 100%;
+}
+
+@media (min-width: 1280px) {
+  .reset-btn {
+    width: auto;
+  }
+}
+</style>

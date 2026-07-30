@@ -9,8 +9,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { Bar } from 'vue-chartjs';
+import { useDisplay } from 'vuetify';
 import {
   Chart as ChartJS,
   BarElement,
@@ -33,6 +34,37 @@ const props = defineProps({
   },
 });
 
+const { smAndDown } = useDisplay();
+const prefersReducedMotion = ref(false);
+let mediaQueryList = null;
+
+function handleMotionPreferenceChange(event) {
+  prefersReducedMotion.value = event.matches;
+}
+
+onMounted(() => {
+  mediaQueryList = window.matchMedia('(prefers-reduced-motion: reduce)');
+  prefersReducedMotion.value = mediaQueryList.matches;
+
+  if (mediaQueryList.addEventListener) {
+    mediaQueryList.addEventListener('change', handleMotionPreferenceChange);
+    return;
+  }
+
+  mediaQueryList.addListener(handleMotionPreferenceChange);
+});
+
+onBeforeUnmount(() => {
+  if (!mediaQueryList) return;
+
+  if (mediaQueryList.removeEventListener) {
+    mediaQueryList.removeEventListener('change', handleMotionPreferenceChange);
+    return;
+  }
+
+  mediaQueryList.removeListener(handleMotionPreferenceChange);
+});
+
 const chartData = computed(() => {
   const maxValue = Math.max(...props.values, 0);
   const lastIndex = props.values.length - 1;
@@ -49,15 +81,20 @@ const chartData = computed(() => {
         data: props.values,
         backgroundColor,
         borderRadius: 6,
-        maxBarThickness: 26,
+        maxBarThickness: smAndDown.value ? 18 : 26,
       },
     ],
   };
 });
 
-const chartOptions = {
+const chartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
+  resizeDelay: 120,
+  animation: {
+    duration: prefersReducedMotion.value ? 0 : 280,
+    easing: 'easeOutQuad',
+  },
   plugins: {
     legend: {
       display: false,
@@ -72,25 +109,34 @@ const chartOptions = {
     x: {
       grid: { display: false },
       ticks: {
-        color: '#64748B',
+        color: '#475569',
+        maxRotation: 0,
+        autoSkip: true,
+        maxTicksLimit: smAndDown.value ? 6 : 10,
       },
     },
     y: {
       beginAtZero: true,
       ticks: {
         precision: 0,
-        color: '#64748B',
+        color: '#475569',
       },
       grid: {
         color: 'rgba(27, 42, 74, 0.08)',
       },
     },
   },
-};
+}));
 </script>
 
 <style scoped>
 .chart-wrap {
-  height: 290px;
+  height: clamp(240px, 32vw, 320px);
+}
+
+@media (max-width: 959px) {
+  .chart-wrap {
+    height: 260px;
+  }
 }
 </style>

@@ -9,8 +9,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { Line } from 'vue-chartjs';
+import { useDisplay } from 'vuetify';
 import {
   Chart as ChartJS,
   LineElement,
@@ -39,6 +40,37 @@ const props = defineProps({
   },
 });
 
+const { smAndDown } = useDisplay();
+const prefersReducedMotion = ref(false);
+let mediaQueryList = null;
+
+function handleMotionPreferenceChange(event) {
+  prefersReducedMotion.value = event.matches;
+}
+
+onMounted(() => {
+  mediaQueryList = window.matchMedia('(prefers-reduced-motion: reduce)');
+  prefersReducedMotion.value = mediaQueryList.matches;
+
+  if (mediaQueryList.addEventListener) {
+    mediaQueryList.addEventListener('change', handleMotionPreferenceChange);
+    return;
+  }
+
+  mediaQueryList.addListener(handleMotionPreferenceChange);
+});
+
+onBeforeUnmount(() => {
+  if (!mediaQueryList) return;
+
+  if (mediaQueryList.removeEventListener) {
+    mediaQueryList.removeEventListener('change', handleMotionPreferenceChange);
+    return;
+  }
+
+  mediaQueryList.removeListener(handleMotionPreferenceChange);
+});
+
 function valueColor(value) {
   if (value >= props.target) return '#4CAF50';
   if (value >= props.target - 5) return '#FF9800';
@@ -59,7 +91,8 @@ const chartData = computed(() => ({
       pointBackgroundColor: props.values.map((value) => valueColor(value)),
       pointBorderColor: '#FFFFFF',
       pointBorderWidth: 2,
-      pointRadius: 4,
+      pointRadius: smAndDown.value ? 2.5 : 4,
+      pointHoverRadius: smAndDown.value ? 4 : 6,
       fill: true,
       backgroundColor: 'rgba(76, 175, 80, 0.08)',
     },
@@ -75,9 +108,14 @@ const chartData = computed(() => ({
   ],
 }));
 
-const chartOptions = {
+const chartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
+  resizeDelay: 120,
+  animation: {
+    duration: prefersReducedMotion.value ? 0 : 300,
+    easing: 'easeOutQuad',
+  },
   interaction: {
     mode: 'index',
     intersect: false,
@@ -85,6 +123,7 @@ const chartOptions = {
   plugins: {
     legend: {
       display: true,
+      position: smAndDown.value ? 'bottom' : 'top',
       labels: {
         usePointStyle: true,
       },
@@ -102,7 +141,10 @@ const chartOptions = {
     x: {
       grid: { display: false },
       ticks: {
-        color: '#64748B',
+        color: '#475569',
+        maxRotation: 0,
+        autoSkip: true,
+        maxTicksLimit: smAndDown.value ? 6 : 10,
       },
     },
     y: {
@@ -110,18 +152,24 @@ const chartOptions = {
       suggestedMax: 100,
       ticks: {
         callback: (value) => `${value}%`,
-        color: '#64748B',
+        color: '#475569',
       },
       grid: {
         color: 'rgba(27, 42, 74, 0.08)',
       },
     },
   },
-};
+}));
 </script>
 
 <style scoped>
 .chart-wrap {
-  height: 290px;
+  height: clamp(240px, 32vw, 320px);
+}
+
+@media (max-width: 959px) {
+  .chart-wrap {
+    height: 260px;
+  }
 }
 </style>
