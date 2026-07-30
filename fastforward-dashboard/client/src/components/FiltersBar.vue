@@ -119,4 +119,21 @@ function resetFilters() {
 watch([dateRange, region, exceptionStatus], () => {
   emit('filters-change', currentFilters());
 }, { immediate: true });
+
+watch(
+  () => props.initialFilters,
+  (incoming) => {
+    if (!incoming) return;
+    if (incoming.dateRange !== undefined && incoming.dateRange !== dateRange.value) {
+      dateRange.value = incoming.dateRange;
+    }
+    if (incoming.region && incoming.region !== region.value) {
+      region.value = incoming.region;
+    }
+    if (incoming.exceptionStatus && incoming.exceptionStatus !== exceptionStatus.value) {
+      exceptionStatus.value = incoming.exceptionStatus;
+    }
+  },
+  { deep: true }
+);
 </script>

@@ -13,7 +13,11 @@
           <OnTimeDeliveryChart :labels="chartLabels" :values="onTimeRateData" />
         </section>
         <section id="avgTransitTime-section" class="drilldown-anchor">
-          <h2 class="text-h6">Transit Time Analysis</h2>
+          <RegionalPerformanceTable
+            :items="regionalRows"
+            :selected-region="activeFilters.region"
+            @region-click="onRegionRowClick"
+          />
         </section>
         <section id="openExceptions-section" class="drilldown-anchor">
           <h2 class="text-h6">Open Exceptions</h2>
@@ -30,6 +34,7 @@ import FiltersBar from '../components/FiltersBar.vue';
 import KpiCards from '../components/KpiCards.vue';
 import ShipmentVolumeChart from '../components/ShipmentVolumeChart.vue';
 import OnTimeDeliveryChart from '../components/OnTimeDeliveryChart.vue';
+import RegionalPerformanceTable from '../components/RegionalPerformanceTable.vue';
 
 const activeFilters = ref({
   dateRange: 30,
@@ -64,6 +69,14 @@ function onFiltersChange(filters) {
 
 function onFiltersReset(filters) {
   activeFilters.value = filters;
+}
+
+function onRegionRowClick(region) {
+  const nextRegion = activeFilters.value.region === region.id ? 'all' : region.id;
+  activeFilters.value = {
+    ...activeFilters.value,
+    region: nextRegion,
+  };
 }
 
 const chartLabels = computed(() => {
@@ -114,6 +127,16 @@ const onTimeRateData = computed(() => {
     const value = 91.2 + wave + drift + statusPenalty;
     return Math.min(98.5, Math.max(82.5, Number(value.toFixed(1))));
   });
+});
+
+const regionalRows = computed(() => {
+  return [
+    { id: 'northeast', name: 'Northeast', totalShipments: 246, onTimeRate: 95.3, avgTransitDays: 2.2, openExceptions: 1 },
+    { id: 'southeast', name: 'Southeast', totalShipments: 261, onTimeRate: 92.4, avgTransitDays: 2.4, openExceptions: 2 },
+    { id: 'midwest', name: 'Midwest', totalShipments: 234, onTimeRate: 89.8, avgTransitDays: 2.0, openExceptions: 4 },
+    { id: 'west', name: 'West', totalShipments: 298, onTimeRate: 90.6, avgTransitDays: 3.1, openExceptions: 6 },
+    { id: 'southwest', name: 'Southwest', totalShipments: 245, onTimeRate: 88.1, avgTransitDays: 2.9, openExceptions: 5 },
+  ];
 });
 </script>
 
