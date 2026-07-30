@@ -3,7 +3,15 @@
     <v-card-title class="text-subtitle-1 font-weight-bold pb-1">On-Time Delivery</v-card-title>
     <v-card-subtitle class="pb-3">Daily on-time percentage vs 90% target</v-card-subtitle>
     <v-card-text class="chart-wrap">
-      <Line :data="chartData" :options="chartOptions" />
+      <div
+        v-if="!hasData"
+        class="chart-empty-state text-body-2 text-medium-emphasis"
+        role="status"
+        aria-live="polite"
+      >
+        No data for this period
+      </div>
+      <Line v-else :data="chartData" :options="chartOptions" />
     </v-card-text>
   </v-card>
 </template>
@@ -70,6 +78,8 @@ onBeforeUnmount(() => {
 
   mediaQueryList.removeListener(handleMotionPreferenceChange);
 });
+
+const hasData = computed(() => props.values.some((value) => Number(value) > 0));
 
 function valueColor(value) {
   if (value >= props.target) return '#4CAF50';
@@ -171,5 +181,13 @@ const chartOptions = computed(() => ({
   .chart-wrap {
     height: 260px;
   }
+}
+
+.chart-empty-state {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 </style>

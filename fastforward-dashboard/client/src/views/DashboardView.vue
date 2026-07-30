@@ -17,8 +17,29 @@
         density="comfortable"
         aria-live="assertive"
       >
-        {{ error }}
+        <div class="d-flex align-center justify-space-between flex-wrap ga-3">
+          <span>{{ error }}</span>
+          <v-btn
+            v-if="!sessionExpired"
+            size="small"
+            color="error"
+            variant="outlined"
+            prepend-icon="mdi-refresh"
+            @click="fetchAll"
+          >
+            Retry
+          </v-btn>
+        </div>
       </v-alert>
+
+      <v-snackbar
+        v-model="showSessionExpiredSnackbar"
+        color="warning"
+        timeout="1200"
+        location="top"
+      >
+        Session expired. Redirecting to login...
+      </v-snackbar>
 
       <v-skeleton-loader
         v-if="loading"
@@ -31,7 +52,16 @@
         :trends="kpiTrends"
       />
 
-      <v-row dense class="mt-1">
+      <EmptyState
+        v-if="hasNoData"
+        icon="mdi-database-off-outline"
+        title="No Data For Selected Filters"
+        message="No shipments or exceptions were found for the selected filters and date range."
+        action-label="Reset Filters"
+        @action-click="resetFiltersToDefault"
+      />
+
+      <v-row v-else dense class="mt-1">
         <v-col cols="12" md="6" lg="6">
           <v-skeleton-loader
             v-if="loading"
@@ -59,7 +89,7 @@
         </v-col>
       </v-row>
 
-      <v-row dense>
+      <v-row v-if="!hasNoData" dense>
         <v-col cols="12" xl="7">
           <v-skeleton-loader
             v-if="loading"
@@ -94,6 +124,7 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import DashboardLayout from '../layouts/DashboardLayout.vue';
 import FiltersBar from '../components/FiltersBar.vue';
 import KpiCards from '../components/KpiCards.vue';
@@ -101,16 +132,21 @@ import ShipmentVolumeChart from '../components/ShipmentVolumeChart.vue';
 import OnTimeDeliveryChart from '../components/OnTimeDeliveryChart.vue';
 import RegionalPerformanceTable from '../components/RegionalPerformanceTable.vue';
 import ExceptionsPanel from '../components/ExceptionsPanel.vue';
+import EmptyState from '../components/EmptyState.vue';
 import { useShipmentData } from '../composables/useShipmentData';
+
+const router = useRouter();
 
 const {
   loading,
   error,
+  sessionExpired,
   filters,
   kpis,
   shipments,
   regions,
   exceptions,
+  fetchAll,
 } = useShipmentData();
 
 const kpiTrends = {
@@ -128,7 +164,9 @@ const uiFilters = computed(() => ({
 
 const isFilterTransitioning = ref(false);
 const prefersReducedMotion = ref(false);
+const showSessionExpiredSnackbar = ref(false);
 let transitionTimer = null;
+let sessionRedirectTimer = null;
 let mediaQueryList = null;
 
 function handleMotionPreferenceChange(event) {
@@ -167,6 +205,10 @@ watch(uiFilters, () => {
 onBeforeUnmount(() => {
   if (transitionTimer) {
     clearTimeout(transitionTimer);
+  }
+
+  if (sessionRedirectTimer) {
+    clearTimeout(sessionRedirectTimer);
   }
 
   if (!mediaQueryList) return;
@@ -277,6 +319,33 @@ const kpiMetrics = computed(() => ({
   avgTransitTime: Number(kpis.value?.avgTransitDays ?? 0),
   openExceptions: Number(kpis.value?.openExceptions || 0),
 }));
+
+const hasNoData = computed(() => {
+  if (loading.value || error.value || sessionExpired.value) return false;
+
+  const shipmentCount = Number(shipments.value?.length || 0);
+  const exceptionCount = Number(exceptions.value?.length || 0);
+  const volumeTotal = shipmentVolumeData.value.reduce((total, value) => total + value, 0);
+
+  return shipmentCount === 0 && exceptionCount === 0 && volumeTotal === 0;
+});
+
+watch(sessionExpired, (isExpired) => {
+  if (!isExpired) return;
+
+  showSessionExpiredSnackbar.value = true;
+
+  if (sessionRedirectTimer) {
+    clearTimeout(sessionRedirectTimer);
+  }
+
+  sessionRedirectTimer = setTimeout(() => {
+    localStorage.removeItem('ff-token');
+    localStorage.removeItem('ff-user');
+    router.replace('/login');
+    sessionRedirectTimer = null;
+  }, 1200);
+});
 </script>
 
 <style scoped>

@@ -4,6 +4,7 @@ import api from '../services/api';
 export function useShipmentData() {
   const loading = ref(false);
   const error = ref(null);
+  const sessionExpired = ref(false);
   const filters = reactive({ days: 30, region: 'all', exceptionStatus: 'all' });
   const kpis = ref(null);
   const shipments = ref([]);
@@ -13,6 +14,7 @@ export function useShipmentData() {
   const fetchAll = async () => {
     loading.value = true;
     error.value = null;
+    sessionExpired.value = false;
     try {
       const [kpiRes, shipRes, regRes, excRes] = await Promise.all([
         api.get('/api/kpis', { params: { days: filters.days, region: filters.region } }),
@@ -25,7 +27,12 @@ export function useShipmentData() {
       regions.value = regRes.data;
       exceptions.value = excRes.data;
     } catch (e) {
-      error.value = 'Failed to load dashboard data.';
+      if (e?.response?.status === 401) {
+        sessionExpired.value = true;
+        error.value = 'Your session has expired. Redirecting to login...';
+      } else {
+        error.value = 'Failed to load dashboard data.';
+      }
     } finally {
       loading.value = false;
     }
@@ -33,5 +40,15 @@ export function useShipmentData() {
 
   watch(filters, fetchAll, { immediate: true });
 
-  return { loading, error, filters, kpis, shipments, regions, exceptions, fetchAll };
+  return {
+    loading,
+    error,
+    sessionExpired,
+    filters,
+    kpis,
+    shipments,
+    regions,
+    exceptions,
+    fetchAll,
+  };
 }

@@ -3,7 +3,15 @@
     <v-card-title class="text-subtitle-1 font-weight-bold pb-1">Shipment Volume</v-card-title>
     <v-card-subtitle class="pb-3">Daily shipment count over selected period</v-card-subtitle>
     <v-card-text class="chart-wrap">
-      <Bar :data="chartData" :options="chartOptions" />
+      <div
+        v-if="!hasData"
+        class="chart-empty-state text-body-2 text-medium-emphasis"
+        role="status"
+        aria-live="polite"
+      >
+        No data for this period
+      </div>
+      <Bar v-else :data="chartData" :options="chartOptions" />
     </v-card-text>
   </v-card>
 </template>
@@ -64,6 +72,8 @@ onBeforeUnmount(() => {
 
   mediaQueryList.removeListener(handleMotionPreferenceChange);
 });
+
+const hasData = computed(() => props.values.some((value) => Number(value) > 0));
 
 const chartData = computed(() => {
   const maxValue = Math.max(...props.values, 0);
@@ -138,5 +148,13 @@ const chartOptions = computed(() => ({
   .chart-wrap {
     height: 260px;
   }
+}
+
+.chart-empty-state {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 </style>
