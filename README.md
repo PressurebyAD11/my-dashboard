@@ -1,5 +1,28 @@
-# Vue 3 + Vite
+# FastForward Logistics — Operations Dashboard
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Internal operations dashboard prototype for FastForward Logistics.
+Built as a POC to replace spreadsheet-based reporting for the VP of Operations.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## Features
+- Real-time KPI summary (shipments, on-time rate, transit time, exceptions)
+- Interactive filters (date range, region, exception status)
+- Shipment volume and on-time delivery trend charts
+- Regional performance comparison table
+- Open exceptions panel with severity tracking
+
+## Tech Stack
+- Vue 3 + Vuetify 3
+- Chart.js (via vue-chartjs)
+- Node.js + Express
+- Deployed on Vercel
+
+## Local Development
+```bash
+# Install dependencies
+npm install
+
+# Start server
+cd server && npm run dev
+
+# Start client
+cd client && npm run dev
