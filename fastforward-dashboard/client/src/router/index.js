@@ -3,13 +3,26 @@ import LoginView from '../views/LoginView.vue';
 import DashboardView from '../views/DashboardView.vue';
 
 const routes = [
-  { path: '/', name: 'login', component: LoginView },
-  { path: '/dashboard', name: 'dashboard', component: DashboardView }
+  { path: '/', redirect: '/dashboard' },
+  { path: '/login', name: 'Login', component: LoginView },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: DashboardView,
+    meta: { requiresAuth: true },
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('ff-token');
+  if (to.meta.requiresAuth && !token) return next('/login');
+  if (to.path === '/login' && token) return next('/dashboard');
+  next();
 });
 
 export default router;

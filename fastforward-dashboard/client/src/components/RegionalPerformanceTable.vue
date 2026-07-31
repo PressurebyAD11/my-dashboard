@@ -115,7 +115,7 @@ import { useDisplay } from 'vuetify';
 
 const emit = defineEmits(['region-click']);
 
-defineProps({
+const props = defineProps({
   items: {
     type: Array,
     default: () => [],
@@ -162,7 +162,7 @@ function emitRegion(item) {
 
 function rowProps(payload) {
   return {
-    class: payload.item.id === selectedRegion ? 'selected-row' : '',
+    class: payload.item.id === props.selectedRegion ? 'selected-row' : '',
   };
 }
 </script>

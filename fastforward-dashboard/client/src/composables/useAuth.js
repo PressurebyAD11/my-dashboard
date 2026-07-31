@@ -16,9 +16,9 @@ export function useAuth() {
       localStorage.setItem('ff-token', data.token);
       localStorage.setItem('ff-user', JSON.stringify(data.user));
       user.value = data.user;
-      router.push('/dashboard');
+      router.replace('/dashboard');
     } catch (e) {
-      error.value = 'Invalid credentials. Please try again.';
+      error.value = e?.response?.data?.error || 'Invalid credentials. Please try again.';
     } finally {
       loading.value = false;
     }
@@ -27,7 +27,7 @@ export function useAuth() {
   const logout = () => {
     localStorage.removeItem('ff-token');
     localStorage.removeItem('ff-user');
-    router.push('/login');
+    router.replace('/login');
   };
 
   return { login, logout, loading, error, user };
