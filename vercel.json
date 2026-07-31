@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "fastforward-dashboard/client/vite.config.js",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    },
+    {
+      "src": "fastforward-dashboard/server/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/auth/(.*)",
+      "dest": "fastforward-dashboard/server/index.js"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "fastforward-dashboard/server/index.js"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "fastforward-dashboard/client/dist/index.html"
+    }
+  ]
+}
