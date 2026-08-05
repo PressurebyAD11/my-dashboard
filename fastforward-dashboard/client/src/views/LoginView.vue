@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main class="login-main">
-      <v-container class="fill-height d-flex align-center justify-center pa-6" fluid>
+      <v-container class="login-shell pa-6" fluid>
         <v-card class="login-card" elevation="10" rounded="xl">
           <v-card-item>
             <template #prepend>
@@ -88,10 +88,29 @@ async function onSubmit() {
 
 <style scoped>
 .login-main {
-  background: linear-gradient(155deg, #f6f8fb 0%, #e4edf7 55%, #d7e6f5 100%);
+  min-height: 100vh;
+  background-image:
+    linear-gradient(135deg, rgba(4, 18, 46, 0.86) 0%, rgba(6, 24, 58, 0.74) 45%, rgba(8, 32, 72, 0.62) 100%),
+    url('../assets/fastforward-login-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.login-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .login-card {
   width: min(440px, 100%);
+}
+
+@media (min-width: 960px) {
+  .login-shell {
+    justify-content: flex-end;
+  }
 }
 </style>
