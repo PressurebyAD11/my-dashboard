@@ -9,8 +9,8 @@
     >
       <v-card
         class="kpi-card"
-        rounded="lg"
-        elevation="2"
+        rounded="xl"
+        elevation="0"
         role="button"
         tabindex="0"
         @click="handleCardClick(card.key)"
@@ -173,14 +173,30 @@ const cards = computed(() => {
 
 <style scoped>
 .kpi-card {
+  position: relative;
+  overflow: hidden;
   min-height: 172px;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: 1px solid rgba(27, 42, 74, 0.08);
+  background:
+    radial-gradient(circle at top right, rgba(242, 101, 34, 0.06), transparent 22%),
+    linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+  box-shadow: 0 18px 40px rgba(17, 31, 58, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1b2a4a 0%, #f26522 100%);
 }
 
 .kpi-card:hover,
 .kpi-card:focus-visible {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgb(0 0 0 / 12%);
+  transform: translateY(-3px);
+  border-color: rgba(27, 42, 74, 0.14);
+  box-shadow: 0 24px 42px rgba(17, 31, 58, 0.12);
 }
 </style>

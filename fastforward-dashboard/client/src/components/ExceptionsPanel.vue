@@ -1,5 +1,5 @@
 <template>
-  <v-card rounded="lg" elevation="1">
+  <v-card class="analytics-card" rounded="xl" elevation="0">
     <v-card-title class="text-subtitle-1 font-weight-bold pb-1">Exceptions Panel</v-card-title>
     <v-card-subtitle class="pb-3">Operational exceptions matching current filters</v-card-subtitle>
 
@@ -72,6 +72,7 @@
         density="comfortable"
         hover
         class="exceptions-table"
+        :hide-default-footer="filteredRows.length <= 10"
         @click:row="openDetails"
       >
         <template #item.severity="{ item }">
@@ -245,6 +246,12 @@ function openDetailsFromItem(item) {
 </script>
 
 <style scoped>
+.analytics-card {
+  border: 1px solid rgba(27, 42, 74, 0.08);
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+  box-shadow: 0 18px 40px rgba(17, 31, 58, 0.08);
+}
+
 .exceptions-table :deep(.v-table__wrapper) {
   overflow-x: auto;
 }

@@ -1,5 +1,5 @@
 <template>
-  <v-card rounded="lg" elevation="1" class="mb-4 filter-card">
+  <v-card rounded="xl" elevation="0" class="mb-4 filter-card">
     <v-card-text class="pa-4">
       <v-row class="align-center" dense>
         <v-col cols="12" lg="5">
@@ -149,15 +149,47 @@ watch(
 
 <style scoped>
 .filter-card {
-  transition: box-shadow 0.2s ease;
+  border: 1px solid rgba(27, 42, 74, 0.08);
+  background:
+    radial-gradient(circle at top right, rgba(242, 101, 34, 0.08), transparent 24%),
+    linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+  box-shadow: 0 16px 36px rgba(17, 31, 58, 0.08);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .filter-card:focus-within {
-  box-shadow: 0 0 0 2px rgba(27, 42, 74, 0.18);
+  border-color: rgba(27, 42, 74, 0.18);
+  box-shadow: 0 0 0 2px rgba(27, 42, 74, 0.12), 0 16px 36px rgba(17, 31, 58, 0.08);
 }
 
 .reset-btn {
   width: 100%;
+  min-height: 42px;
+  justify-content: center;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.filter-card :deep(.v-chip-group) {
+  gap: 0.45rem;
+}
+
+.filter-card :deep(.v-chip) {
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.filter-card :deep(.v-chip.v-chip--selected) {
+  background: #1b2a4a;
+  color: #ffffff;
+  border-color: #1b2a4a;
+  box-shadow: 0 10px 18px rgba(27, 42, 74, 0.16);
+}
+
+.filter-card :deep(.v-field) {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.86);
 }
 
 @media (min-width: 1280px) {

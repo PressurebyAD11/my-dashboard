@@ -1,5 +1,5 @@
 <template>
-  <v-card rounded="lg" elevation="1">
+  <v-card class="analytics-card" rounded="xl" elevation="0">
     <v-card-title class="text-subtitle-1 font-weight-bold pb-1">On-Time Delivery</v-card-title>
     <v-card-subtitle class="pb-3">Daily on-time percentage vs 90% target</v-card-subtitle>
     <v-card-text class="chart-wrap">
@@ -173,6 +173,12 @@ const chartOptions = computed(() => ({
 </script>
 
 <style scoped>
+.analytics-card {
+  border: 1px solid rgba(27, 42, 74, 0.08);
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+  box-shadow: 0 18px 40px rgba(17, 31, 58, 0.08);
+}
+
 .chart-wrap {
   height: clamp(240px, 32vw, 320px);
 }

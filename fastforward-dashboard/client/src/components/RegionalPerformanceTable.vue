@@ -1,5 +1,5 @@
 <template>
-  <v-card rounded="lg" elevation="1">
+  <v-card class="analytics-card" rounded="xl" elevation="0">
     <v-card-title class="text-subtitle-1 font-weight-bold pb-1">Regional Performance</v-card-title>
     <v-card-subtitle class="pb-3">Compare shipment health across regions</v-card-subtitle>
 
@@ -67,6 +67,7 @@
       density="comfortable"
       hover
       class="regional-table"
+      :hide-default-footer="items.length <= 10"
       :row-props="rowProps"
       @click:row="onRowClick"
     >
@@ -143,10 +144,10 @@ function onTimeColor(rate) {
 }
 
 function exceptionSeverity(openCount) {
-  if (openCount > 5) return { label: 'critical', color: 'error' };
-  if (openCount > 3) return { label: 'high', color: 'deep-orange' };
-  if (openCount > 1) return { label: 'medium', color: 'warning' };
-  return { label: 'low', color: 'success' };
+  if (openCount > 5) return { label: 'Critical', color: 'error' };
+  if (openCount > 3) return { label: 'High', color: 'deep-orange' };
+  if (openCount > 1) return { label: 'Medium', color: 'warning' };
+  return { label: 'Low', color: 'success' };
 }
 
 function onRowClick(_, payload) {
@@ -168,6 +169,12 @@ function rowProps(payload) {
 </script>
 
 <style scoped>
+.analytics-card {
+  border: 1px solid rgba(27, 42, 74, 0.08);
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+  box-shadow: 0 18px 40px rgba(17, 31, 58, 0.08);
+}
+
 .regional-table :deep(tbody tr) {
   cursor: pointer;
   transition: background-color 0.18s ease;
