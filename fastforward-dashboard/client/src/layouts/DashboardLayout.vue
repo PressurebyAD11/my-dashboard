@@ -26,29 +26,30 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar class="dashboard-app-bar" color="primary" density="comfortable" elevation="0">
-      <v-btn
-        v-if="showDrawer"
-        icon="mdi-menu"
-        variant="text"
-        @click="drawer = !drawer"
-      />
+    <v-app-bar class="dashboard-app-bar" color="primary" density="comfortable" elevation="0" :height="76">
+      <div class="d-flex align-center topbar-brand">
+        <v-btn
+          v-if="showDrawer"
+          class="menu-btn"
+          icon="mdi-menu"
+          variant="text"
+          @click="drawer = !drawer"
+        />
 
-      <v-avatar class="ml-1 brand-avatar" color="secondary" size="40">
-        <v-icon icon="mdi-truck-fast-outline" color="white" size="18" />
-      </v-avatar>
+        <FastForwardBrandMark class="app-bar-logo" :height="24" />
+      </div>
 
-      <div class="brand-lockup ml-3">
+      <div class="brand-lockup">
         <div class="brand-kicker">FastForward Logistics</div>
         <v-toolbar-title class="dashboard-title">Operations Dashboard</v-toolbar-title>
       </div>
 
       <v-spacer />
 
-      <div class="d-flex align-center ga-2 mr-4 topbar-actions">
-        <v-chip class="user-chip" color="white" variant="tonal" size="default">
-          {{ userName }}
-        </v-chip>
+      <div class="d-flex align-center mr-4 topbar-actions">
+        <v-avatar class="user-avatar" size="40">
+          <span class="user-avatar-text">SC</span>
+        </v-avatar>
         <v-btn
           class="logout-btn"
           color="secondary"
@@ -56,7 +57,7 @@
           prepend-icon="mdi-logout"
           @click="logout"
         >
-          Log out
+          LOG OUT
         </v-btn>
       </div>
     </v-app-bar>
@@ -72,6 +73,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useDisplay } from 'vuetify';
+import FastForwardBrandMark from '../components/FastForwardBrandMark.vue';
 import { useAuth } from '../composables/useAuth';
 
 const props = defineProps({
@@ -93,15 +95,6 @@ const { logout } = useAuth();
 const drawer = ref(!mobile.value && props.showDrawer);
 
 const isMobile = computed(() => mobile.value);
-const userName = computed(() => {
-  try {
-    const raw = localStorage.getItem('ff-user');
-    const user = raw ? JSON.parse(raw) : null;
-    return user?.name || user?.username || 'Operations User';
-  } catch {
-    return 'Operations User';
-  }
-});
 </script>
 
 <style scoped>
@@ -141,12 +134,26 @@ const userName = computed(() => {
   box-shadow: 0 12px 30px rgba(12, 24, 45, 0.18);
 }
 
-.brand-avatar {
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+.dashboard-app-bar :deep(.v-toolbar__content) {
+  min-height: 76px !important;
+  padding-block: 0.35rem;
+}
+
+.topbar-brand {
+  gap: 1rem;
+}
+
+.menu-btn {
+  margin-inline-start: 0;
+}
+
+.app-bar-logo {
+  flex: 0 0 auto;
 }
 
 .brand-lockup {
   min-width: 0;
+  margin-inline-start: 1rem;
 }
 
 .brand-kicker {
@@ -166,16 +173,52 @@ const userName = computed(() => {
   text-overflow: ellipsis;
 }
 
-.user-chip {
+.topbar-actions {
+  gap: 1rem;
+}
+
+.user-avatar {
+  background: rgba(12, 24, 45, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  font-weight: 600;
+}
+
+.user-avatar-text {
+  color: #fff;
+  font-size: 0.94rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
 }
 
 .logout-btn {
   min-width: 116px;
-  text-transform: none;
-  letter-spacing: 0.01em;
+  height: 2.9rem;
+  padding-inline: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.95rem;
   font-weight: 700;
+  border-radius: 0.55rem;
+  transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease;
+}
+
+.logout-btn:hover {
+  background: #e03d0f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 75, 23, 0.45);
+}
+
+.logout-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(255, 75, 23, 0.3);
+}
+
+.logout-btn :deep(.v-btn__prepend) {
+  margin-inline-end: 0.45rem;
+}
+
+.logout-btn :deep(.v-btn__content),
+.logout-btn :deep(.v-btn__prepend .v-icon) {
+  color: #fff;
 }
 
 .dashboard-main {
@@ -188,11 +231,7 @@ const userName = computed(() => {
 
 @media (max-width: 959px) {
   .topbar-actions {
-    gap: 0.5rem !important;
-  }
-
-  .user-chip {
-    display: none;
+    gap: 0.75rem !important;
   }
 
   .logout-btn {

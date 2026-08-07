@@ -5,12 +5,7 @@
         <v-card class="login-card" elevation="0" rounded="xl">
           <v-card-text class="pa-7 pa-sm-9">
             <div class="brand-row mb-9">
-              <div class="brand-mark" aria-hidden="true">
-                <svg viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg" focusable="false">
-                  <polygon points="0,0 20,0 34,20 20,40 0,40 14,20" fill="#ffffff" />
-                  <polygon points="24,0 44,0 58,20 44,40 24,40 38,20" fill="#ff4b17" />
-                </svg>
-              </div>
+              <FastForwardBrandMark class="brand-mark" :height="41.6" />
               <div class="brand-text">
                 <p class="brand-name ma-0">
                   FAST<span>FORWARD</span>
@@ -101,6 +96,7 @@
 
 <script setup>
 import { computed, ref } from 'vue';
+import FastForwardBrandMark from '../components/FastForwardBrandMark.vue';
 import { useAuth } from '../composables/useAuth';
 
 const username = ref('');
@@ -189,13 +185,7 @@ async function onSubmit() {
 }
 
 .brand-mark {
-  display: inline-flex;
-  align-items: center;
-}
-
-.brand-mark svg {
-  height: 2.6rem;
-  width: auto;
+  flex: 0 0 auto;
 }
 
 .brand-name {
@@ -321,7 +311,7 @@ async function onSubmit() {
 @media (min-width: 960px) {
   .login-shell {
     justify-content: flex-end;
-    padding-right: 4.5rem;
+    padding-right: 6.5rem;
   }
 }
 
