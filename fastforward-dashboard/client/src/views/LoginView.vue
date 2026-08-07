@@ -19,8 +19,8 @@
 
             <div class="accent-line mb-7" aria-hidden="true"></div>
 
-            <h1 class="welcome-title mb-1">Welcome Back</h1>
-            <p class="welcome-subtitle mb-6">Sign in to your dashboard</p>
+            <h1 class="welcome-title mb-1">Operations Dashboard</h1>
+            <p class="welcome-subtitle mb-6">Access the FastForward Logistics operations platform.</p>
 
             <v-form class="login-form" @submit.prevent="onSubmit">
               <v-text-field
@@ -89,7 +89,7 @@
 
               <p class="footnote mt-7 mb-0">
                 <v-icon icon="mdi-shield-check-outline" size="17" class="mr-2" />
-                Moving freight forward. Delivering success.
+                Real-time operational visibility.
               </p>
             </v-form>
           </v-card-text>
@@ -122,7 +122,7 @@ async function onSubmit() {
 .login-main {
   min-height: 100vh;
   background-image:
-    linear-gradient(135deg, rgba(4, 18, 46, 0.86) 0%, rgba(6, 24, 58, 0.74) 45%, rgba(8, 32, 72, 0.62) 100%),
+    linear-gradient(to right, rgba(4, 18, 46, 0.38) 0%, rgba(6, 24, 58, 0.50) 50%, rgba(8, 32, 72, 0.63) 100%),
     url('../assets/fastforward-login-bg.png');
   background-size: cover;
   background-position: center;
@@ -196,14 +196,18 @@ async function onSubmit() {
 }
 
 .welcome-title {
-  font-size: clamp(2rem, 2.5vw, 2.15rem);
+  font-size: clamp(1.5rem, 2vw, 1.7rem);
   line-height: 1.2;
   font-weight: 650;
+  white-space: nowrap;
+  text-align: center;
 }
 
 .welcome-subtitle {
   color: rgba(233, 241, 255, 0.86);
-  font-size: 1rem;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  text-align: center;
 }
 
 .login-form {
@@ -250,6 +254,7 @@ async function onSubmit() {
 .footnote {
   display: flex;
   align-items: center;
+  justify-content: center;
   color: rgba(220, 230, 248, 0.84);
   font-size: 0.9rem;
 }
