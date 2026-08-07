@@ -4,10 +4,12 @@
       <v-container class="login-shell px-4 px-sm-8 px-md-10" fluid>
         <v-card class="login-card" elevation="0" rounded="xl">
           <v-card-text class="pa-7 pa-sm-9">
-            <div class="brand-row mb-7">
+            <div class="brand-row mb-9">
               <div class="brand-mark" aria-hidden="true">
-                <v-icon class="chevron chevron-light" icon="mdi-chevron-right" />
-                <v-icon class="chevron chevron-accent" icon="mdi-chevron-right" />
+                <svg viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                  <polygon points="0,0 20,0 34,20 20,40 0,40 14,20" fill="#ffffff" />
+                  <polygon points="24,0 44,0 58,20 44,40 24,40 38,20" fill="#ff4b17" />
+                </svg>
               </div>
               <div class="brand-text">
                 <p class="brand-name ma-0">
@@ -16,8 +18,6 @@
                 <p class="brand-sub ma-0">LOGISTICS</p>
               </div>
             </div>
-
-            <div class="accent-line mb-7" aria-hidden="true"></div>
 
             <h1 class="welcome-title mb-1">Operations Dashboard</h1>
             <p class="welcome-subtitle mb-6">Access the FastForward Logistics operations platform.</p>
@@ -121,6 +121,7 @@ async function onSubmit() {
 <style scoped>
 .login-main {
   min-height: 100vh;
+  position: relative;
   background-image:
     linear-gradient(to right, rgba(4, 18, 46, 0.38) 0%, rgba(6, 24, 58, 0.50) 50%, rgba(8, 32, 72, 0.63) 100%),
     url('../assets/fastforward-login-bg.png');
@@ -129,11 +130,47 @@ async function onSubmit() {
   background-repeat: no-repeat;
 }
 
+/* Warm glow simulating truck headlights, positioned lower-center-left */
+.login-main::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 38% 28% at 32% 68%, rgba(255, 195, 90, 0.13) 0%, transparent 70%);
+  animation: headlight-pulse 8s ease-in-out infinite;
+  z-index: 0;
+}
+
+/* Diagonal shimmer sweep simulating roadway light trails */
+.login-main::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(108deg, transparent 25%, rgba(255, 255, 255, 0.035) 50%, transparent 75%);
+  background-size: 300% 100%;
+  animation: road-shimmer 11s ease-in-out infinite;
+  z-index: 0;
+}
+
 .login-shell {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* Soft cool-blue pulse simulating world map network connection activity */
+.login-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 55% 45% at 50% 38%, rgba(90, 150, 255, 0.07) 0%, transparent 65%);
+  animation: network-pulse 12s ease-in-out infinite;
+  z-index: 0;
 }
 
 .login-card {
@@ -156,18 +193,9 @@ async function onSubmit() {
   align-items: center;
 }
 
-.chevron {
-  font-size: 2.35rem;
-  line-height: 1;
-}
-
-.chevron-light {
-  color: #ffffff;
-}
-
-.chevron-accent {
-  color: #ff4b17;
-  margin-left: -0.45rem;
+.brand-mark svg {
+  height: 2.6rem;
+  width: auto;
 }
 
 .brand-name {
@@ -186,13 +214,6 @@ async function onSubmit() {
   letter-spacing: 0.42em;
   font-size: 0.84rem;
   color: #d4dfef;
-}
-
-.accent-line {
-  width: 2.7rem;
-  height: 4px;
-  border-radius: 99px;
-  background: #ff4b17;
 }
 
 .welcome-title {
@@ -249,6 +270,18 @@ async function onSubmit() {
   background: #ff4b17;
   color: #fff;
   border-radius: 0.55rem;
+  transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease;
+}
+
+.sign-in-btn:hover {
+  background: #e03d0f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 75, 23, 0.45);
+}
+
+.sign-in-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(255, 75, 23, 0.3);
 }
 
 .footnote {
@@ -306,6 +339,29 @@ async function onSubmit() {
   .meta-row {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@keyframes headlight-pulse {
+  0%, 100% { opacity: 0.35; }
+  50%       { opacity: 1; }
+}
+
+@keyframes road-shimmer {
+  0%   { background-position: -100% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes network-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-main::before,
+  .login-main::after,
+  .login-shell::before {
+    animation: none;
   }
 }
 </style>
