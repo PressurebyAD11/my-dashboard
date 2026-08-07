@@ -10,7 +10,7 @@
     >
       <div class="drawer-header px-4 pt-4 pb-2">
         <div class="drawer-kicker">FastForward</div>
-        <div class="drawer-title">Ops Command</div>
+        <div class="drawer-title">Operations</div>
       </div>
 
       <v-list nav density="comfortable">
@@ -45,7 +45,7 @@
 
       <v-spacer />
 
-      <div class="d-flex align-center ga-2 topbar-actions">
+      <div class="d-flex align-center ga-2 mr-4 topbar-actions">
         <v-chip class="user-chip" color="white" variant="tonal" size="default">
           {{ userName }}
         </v-chip>
@@ -82,7 +82,7 @@ const props = defineProps({
   navItems: {
     type: Array,
     default: () => [
-      { title: 'Dashboard', icon: 'mdi-view-dashboard-outline', to: '/dashboard' },
+      { title: 'Overview', icon: 'mdi-view-dashboard-outline', to: '/dashboard' },
     ],
   },
 });

@@ -1,6 +1,6 @@
 <template>
   <v-card rounded="xl" elevation="0" class="mb-4 filter-card">
-    <v-card-text class="pa-4">
+    <v-card-text class="px-5 py-4">
       <v-row class="align-center" dense>
         <v-col cols="12" lg="5">
           <div class="text-caption text-medium-emphasis mb-2">Date Range</div>
@@ -23,7 +23,7 @@
           </v-chip-group>
         </v-col>
 
-        <v-col cols="12" sm="6" lg="3">
+        <v-col cols="12" lg="7" class="d-flex align-center">
           <v-select
             v-model="region"
             :items="regionOptions"
@@ -34,10 +34,8 @@
             variant="outlined"
             density="comfortable"
             hide-details
+            class="filter-dropdown"
           />
-        </v-col>
-
-        <v-col cols="12" sm="6" lg="3">
           <v-select
             v-model="exceptionStatus"
             :items="exceptionStatusOptions"
@@ -48,15 +46,13 @@
             variant="outlined"
             density="comfortable"
             hide-details
+            class="filter-dropdown ml-2"
           />
-        </v-col>
-
-        <v-col cols="12" lg="1" class="d-flex justify-lg-end">
           <v-btn
             variant="text"
             color="secondary"
             prepend-icon="mdi-refresh"
-            class="reset-btn"
+            class="reset-btn ml-8 flex-shrink-0"
             aria-label="Reset all dashboard filters"
             @click="resetFilters"
           >
@@ -162,10 +158,12 @@ watch(
   box-shadow: 0 0 0 2px rgba(27, 42, 74, 0.12), 0 16px 36px rgba(17, 31, 58, 0.08);
 }
 
+.filter-dropdown {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
 .reset-btn {
-  width: 100%;
-  min-height: 42px;
-  justify-content: center;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -192,9 +190,5 @@ watch(
   background: rgba(255, 255, 255, 0.86);
 }
 
-@media (min-width: 1280px) {
-  .reset-btn {
-    width: auto;
-  }
-}
+
 </style>
