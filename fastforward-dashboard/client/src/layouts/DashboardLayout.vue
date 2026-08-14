@@ -54,7 +54,6 @@
           class="logout-btn"
           color="secondary"
           variant="flat"
-          prepend-icon="mdi-logout"
           @click="logout"
         >
           LOG OUT
@@ -212,12 +211,7 @@ const isMobile = computed(() => mobile.value);
   box-shadow: 0 2px 8px rgba(255, 75, 23, 0.3);
 }
 
-.logout-btn :deep(.v-btn__prepend) {
-  margin-inline-end: 0.45rem;
-}
-
-.logout-btn :deep(.v-btn__content),
-.logout-btn :deep(.v-btn__prepend .v-icon) {
+.logout-btn :deep(.v-btn__content) {
   color: #fff;
 }
 
