@@ -3,7 +3,12 @@
     <v-navigation-drawer
       v-if="showDrawer"
       v-model="drawer"
-      :rail="isMobile"
+      app
+      :temporary="isMobile"
+      :width="drawerWidth"
+      disable-resize-watcher
+      disable-route-watcher
+      location="left"
       border="end"
       color="surface"
       class="dashboard-drawer"
@@ -26,7 +31,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar class="dashboard-app-bar" color="primary" density="comfortable" elevation="0" :height="76">
+    <v-app-bar app class="dashboard-app-bar" color="primary" density="comfortable" elevation="0" :height="76">
       <div class="d-flex align-center topbar-brand">
         <v-btn
           v-if="showDrawer"
@@ -70,7 +75,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useDisplay } from 'vuetify';
 import FastForwardBrandMark from '../components/FastForwardBrandMark.vue';
 import { useAuth } from '../composables/useAuth';
@@ -88,12 +93,26 @@ const props = defineProps({
   },
 });
 
-const { mobile } = useDisplay();
+const { mdAndDown } = useDisplay();
 const { logout } = useAuth();
+const drawerWidth = 256;
 
-const drawer = ref(!mobile.value && props.showDrawer);
+const drawer = ref(false);
 
-const isMobile = computed(() => mobile.value);
+const isMobile = computed(() => mdAndDown.value);
+
+onMounted(() => {
+  drawer.value = false;
+});
+
+watch(isMobile, () => {
+  // On breakpoint transitions, reset to closed for a consistent default state.
+  drawer.value = false;
+});
+
+watch(() => props.showDrawer, () => {
+  drawer.value = false;
+});
 </script>
 
 <style scoped>

@@ -140,7 +140,7 @@
           </section>
         </v-col>
 
-        <v-col cols="12" xl="5">
+        <v-col cols="12" xl="5" class="mt-4 mt-xl-0">
           <section id="exceptions-panel-section" class="dashboard-section-anchor">
           <v-skeleton-loader
             v-if="loading"

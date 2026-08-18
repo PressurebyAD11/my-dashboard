@@ -21,20 +21,7 @@
           <div class="d-flex align-start justify-space-between mb-3">
             <div class="text-body-2 text-medium-emphasis">{{ card.label }}</div>
 
-            <v-badge
-              v-if="card.key === 'openExceptions'"
-              :content="card.badge"
-              :model-value="card.badge > 5"
-              color="error"
-              offset-x="2"
-              offset-y="2"
-            >
-              <v-avatar :color="`${card.accent}15`" size="34">
-                <v-icon :icon="card.icon" :color="card.accent" size="20" />
-              </v-avatar>
-            </v-badge>
-
-            <v-avatar v-else :color="`${card.accent}15`" size="34">
+            <v-avatar :color="`${card.accent}15`" size="34">
               <v-icon :icon="card.icon" :color="card.accent" size="20" />
             </v-avatar>
           </div>
@@ -164,7 +151,6 @@ const cards = computed(() => {
       displayValue: Number(props.metrics.openExceptions || 0).toLocaleString(),
       icon: 'mdi-alert-circle',
       accent: 'error',
-      badge: Number(props.metrics.openExceptions || 0),
       ...openExceptionsTrend,
     },
   ];
