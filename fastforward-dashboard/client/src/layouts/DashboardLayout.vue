@@ -204,7 +204,6 @@ watch(() => props.showDrawer, () => {
   color: #fff;
   font-size: 0.94rem;
   font-weight: 800;
-  letter-spacing: 0.04em;
 }
 
 .logout-btn {
@@ -212,7 +211,6 @@ watch(() => props.showDrawer, () => {
   height: 2.9rem;
   padding-inline: 1rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
   font-size: 0.95rem;
   font-weight: 700;
   border-radius: 0.55rem;
