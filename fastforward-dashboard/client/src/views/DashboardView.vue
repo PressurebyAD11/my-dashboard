@@ -394,6 +394,8 @@ const scopeNarrative = computed(() => (
   filters.region === 'all' ? `across ${activeRegionCount.value} regions` : `for ${selectedRegionLabel.value}`
 ));
 
+const hasShipmentsInScope = computed(() => Number(kpiMetrics.value.totalShipments || 0) > 0);
+
 const exceptionChipColor = computed(() => {
   const count = kpiMetrics.value.openExceptions;
   if (count >= 8) return 'error';
@@ -409,19 +411,9 @@ const exceptionChipLabel = computed(() => {
 });
 
 const overviewPerformanceState = computed(() => {
-  if (loading.value) return 'loading';
-  if (error.value) return 'error';
-
   const shipmentCount = Number(kpiMetrics.value.totalShipments || 0);
   const onTimeRate = Number(kpiMetrics.value.onTimeRate || 0);
-  const openExceptions = Number(kpiMetrics.value.openExceptions || 0);
-  const selectedRange = Number(uiFilters.value.dateRange || 0);
-
-  if (shipmentCount === 0) {
-    if (openExceptions === 0 && selectedRange === 7) return 'quiet-period';
-    if (openExceptions === 0 && selectedRange === 14) return 'stable';
-    return 'no-activity';
-  }
+  if (shipmentCount === 0) return 'target-unavailable';
 
   if (onTimeRate < ON_TARGET_LOWER_BOUND) return 'below-target';
   if (onTimeRate <= ON_TARGET_UPPER_BOUND) return 'on-target';
@@ -429,68 +421,38 @@ const overviewPerformanceState = computed(() => {
 });
 
 const overviewPanelStateClass = computed(() => {
-  if (overviewPerformanceState.value === 'quiet-period') return 'overview-panel--no-activity';
-  if (overviewPerformanceState.value === 'stable') return 'overview-panel--no-activity';
+  if (overviewPerformanceState.value === 'target-unavailable') return 'overview-panel--no-activity';
   if (overviewPerformanceState.value === 'below-target') return 'overview-panel--below-target';
   if (overviewPerformanceState.value === 'on-target') return 'overview-panel--on-target';
   if (overviewPerformanceState.value === 'above-target') return 'overview-panel--above-target';
-  if (overviewPerformanceState.value === 'no-activity') return 'overview-panel--no-activity';
   return '';
 });
 
 const overviewStatusLabel = computed(() => {
-  if (overviewPerformanceState.value === 'loading') return 'REFRESHING SNAPSHOT';
-  if (overviewPerformanceState.value === 'error') return 'DATA NEEDS ATTENTION';
-  if (overviewPerformanceState.value === 'quiet-period') return 'QUIET PERIOD';
-  if (overviewPerformanceState.value === 'stable') return 'STABLE';
-  if (overviewPerformanceState.value === 'no-activity') return 'NO ACTIVITY';
+  if (overviewPerformanceState.value === 'target-unavailable') return 'TARGET UNAVAILABLE';
   if (overviewPerformanceState.value === 'below-target') return 'BELOW TARGET';
   if (overviewPerformanceState.value === 'on-target') return 'ON TARGET';
   return 'ABOVE TARGET';
 });
 
 const overviewHeadline = computed(() => {
-  if (overviewPerformanceState.value === 'loading') return 'Refreshing operations snapshot';
-  if (overviewPerformanceState.value === 'error') return 'Dashboard data is temporarily unavailable';
-  if (overviewPerformanceState.value === 'quiet-period') return 'No shipment activity this week';
-  if (overviewPerformanceState.value === 'stable') return 'No active shipment activity in this period';
-  if (overviewPerformanceState.value === 'no-activity') return 'No shipments in this date range';
+  if (overviewPerformanceState.value === 'target-unavailable') return 'No delivery performance to evaluate';
   if (overviewPerformanceState.value === 'below-target') return 'On-time performance needs attention';
-  if (overviewPerformanceState.value === 'on-target') return 'On-time performance is holding steady';
+  if (overviewPerformanceState.value === 'on-target') return 'On-time performance is on target';
   return 'On-time performance is exceeding target';
 });
 
 const overviewSummary = computed(() => {
-  if (overviewPerformanceState.value === 'loading') {
-    return 'Refreshing shipment health, regional performance, and exception load for the current operating window.';
-  }
+  const shipmentCount = kpiMetrics.value.totalShipments.toLocaleString();
+  const exceptionCount = kpiMetrics.value.openExceptions;
 
-  if (overviewPerformanceState.value === 'error') {
-    return 'Restore the dashboard feed to resume the current leadership readout.';
-  }
-
-  if (overviewPerformanceState.value === 'quiet-period') {
-    return `There are currently no shipments or active exceptions in scope for the selected ${activeWindowLabel.value.toLowerCase()} ${scopeNarrative.value}.`;
-  }
-
-  if (overviewPerformanceState.value === 'stable') {
-    return `No shipments or active exceptions were recorded in the selected ${activeWindowLabel.value.toLowerCase()} ${scopeNarrative.value}.`;
-  }
-
-  if (overviewPerformanceState.value === 'no-activity') {
-    return `There are no shipments in scope for the selected ${activeWindowLabel.value.toLowerCase()} ${scopeNarrative.value}.`;
+  if (!hasShipmentsInScope.value) {
+    return `There were no shipments in the selected ${uiFilters.value.dateRange}-day window, so on-time delivery performance cannot be measured against the ${PERFORMANCE_TARGET}% target.`;
   }
 
   const rate = kpiMetrics.value.onTimeRate;
-  const shipmentCount = kpiMetrics.value.totalShipments.toLocaleString();
-  const exceptionCount = kpiMetrics.value.openExceptions;
-  const performanceLead = overviewPerformanceState.value === 'above-target'
-    ? 'On-time performance is running above target.'
-    : overviewPerformanceState.value === 'on-target'
-      ? 'On-time performance is within the target range.'
-      : 'On-time performance is below target.';
-
-  return `${performanceLead} ${shipmentCount} shipments are in scope for the ${activeWindowLabel.value.toLowerCase()}. ${rate.toFixed(1)}% are on time, and ${exceptionCount} open exceptions remain active ${scopeNarrative.value}.`;
+  const exceptionLabel = exceptionCount === 1 ? 'open exception remains' : 'open exceptions remain';
+  return `${shipmentCount} shipments are in scope for the selected ${uiFilters.value.dateRange}-day window, with ${rate.toFixed(1)}% delivered on time. ${exceptionCount} ${exceptionLabel} ${scopeNarrative.value}.`;
 });
 
 const overviewMetrics = computed(() => [
@@ -505,13 +467,8 @@ const overviewMetrics = computed(() => [
   {
     label: 'Performance Gap',
     value: (() => {
-        if (overviewPerformanceState.value === 'quiet-period') return 'Not applicable';
-        if (overviewPerformanceState.value === 'stable') return 'No recent activity';
-      if (overviewPerformanceState.value === 'no-activity') return 'No data';
-      if (overviewPerformanceState.value === 'on-target') {
-        const variance = Math.abs(kpiMetrics.value.onTimeRate - PERFORMANCE_TARGET);
-        return variance <= 0.2 ? 'On target' : 'Within target range';
-      }
+      if (!hasShipmentsInScope.value) return '—';
+      if (overviewPerformanceState.value === 'on-target') return 'Within target range';
 
       const gap = Math.abs(kpiMetrics.value.onTimeRate - PERFORMANCE_TARGET).toFixed(1);
       return `${gap} pts ${kpiMetrics.value.onTimeRate >= PERFORMANCE_TARGET ? 'above' : 'below'}`;
@@ -525,20 +482,14 @@ const kpiTrends = computed(() => ({
     text: `${activeWindowLabel.value} in scope`,
   },
   onTimeRate: {
-    direction: overviewPerformanceState.value === 'quiet-period'
-      || overviewPerformanceState.value === 'stable'
-      || overviewPerformanceState.value === 'no-activity'
+    direction: !hasShipmentsInScope.value
       ? 'flat'
-      : kpiMetrics.value.onTimeRate >= 90 ? 'up' : 'down',
-    text: overviewPerformanceState.value === 'quiet-period'
-      ? 'Not applicable'
-      : overviewPerformanceState.value === 'stable'
-        ? 'No recent activity'
-        : overviewPerformanceState.value === 'no-activity'
-          ? 'No data in selected window'
-          : kpiMetrics.value.onTimeRate >= 90
-            ? `${(kpiMetrics.value.onTimeRate - 90).toFixed(1)} pts above target`
-            : `${(90 - kpiMetrics.value.onTimeRate).toFixed(1)} pts below target`,
+      : kpiMetrics.value.onTimeRate >= PERFORMANCE_TARGET ? 'up' : 'down',
+    text: !hasShipmentsInScope.value
+      ? 'No shipment data'
+      : kpiMetrics.value.onTimeRate >= PERFORMANCE_TARGET
+        ? `${(kpiMetrics.value.onTimeRate - PERFORMANCE_TARGET).toFixed(1)} pts above target`
+        : `${(PERFORMANCE_TARGET - kpiMetrics.value.onTimeRate).toFixed(1)} pts below target`,
   },
   avgTransitTime: {
     direction: kpiMetrics.value.avgTransitTime <= 2.5 ? 'down' : 'up',
