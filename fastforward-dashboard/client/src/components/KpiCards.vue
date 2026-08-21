@@ -26,18 +26,7 @@
             </v-avatar>
           </div>
 
-          <div class="text-h4 font-weight-bold text-primary mb-2">{{ card.displayValue }}</div>
-
-          <div class="d-flex align-center ga-2 text-caption">
-            <v-icon
-              :icon="card.trendIcon"
-              :color="card.trendColor"
-              size="16"
-            />
-            <span class="font-weight-medium" :class="`text-${card.trendColor}`">
-              {{ card.trendText }}
-            </span>
-          </div>
+          <div class="text-h4 font-weight-bold text-primary mb-0">{{ card.displayValue }}</div>
         </v-card-text>
       </v-card>
     </v-col>
@@ -77,36 +66,6 @@ const onTimeColor = computed(() => {
   return 'error';
 });
 
-const trendIconMap = {
-  up: 'mdi-trending-up',
-  down: 'mdi-trending-down',
-  flat: 'mdi-trending-neutral',
-};
-
-function getTrendColor(key, direction) {
-  if (direction === 'flat') return 'medium-emphasis';
-
-  const improvesWhenUp = {
-    totalShipments: true,
-    onTimeRate: true,
-    avgTransitTime: false,
-    openExceptions: false,
-  };
-
-  const isPositive = improvesWhenUp[key] ? direction === 'up' : direction === 'down';
-  return isPositive ? 'success' : 'error';
-}
-
-function formatTrend(key) {
-  const trend = props.trends[key] || { direction: 'flat', text: 'No change' };
-  const direction = trend.direction || 'flat';
-  return {
-    trendIcon: trendIconMap[direction] || trendIconMap.flat,
-    trendColor: getTrendColor(key, direction),
-    trendText: trend.text || 'No change',
-  };
-}
-
 function handleCardClick(key) {
   emit('card-click', {
     key,
@@ -115,11 +74,6 @@ function handleCardClick(key) {
 }
 
 const cards = computed(() => {
-  const totalShipmentsTrend = formatTrend('totalShipments');
-  const onTimeRateTrend = formatTrend('onTimeRate');
-  const avgTransitTimeTrend = formatTrend('avgTransitTime');
-  const openExceptionsTrend = formatTrend('openExceptions');
-
   return [
     {
       key: 'totalShipments',
@@ -127,7 +81,6 @@ const cards = computed(() => {
       displayValue: Number(props.metrics.totalShipments || 0).toLocaleString(),
       icon: 'mdi-truck',
       accent: 'primary',
-      ...totalShipmentsTrend,
     },
     {
       key: 'onTimeRate',
@@ -135,7 +88,6 @@ const cards = computed(() => {
       displayValue: `${Number(props.metrics.onTimeRate || 0).toFixed(1)}%`,
       icon: 'mdi-clock-check',
       accent: onTimeColor.value,
-      ...onTimeRateTrend,
     },
     {
       key: 'avgTransitTime',
@@ -143,7 +95,6 @@ const cards = computed(() => {
       displayValue: `${Number(props.metrics.avgTransitTime || 0).toFixed(1)} d`,
       icon: 'mdi-timer-sand',
       accent: 'secondary',
-      ...avgTransitTimeTrend,
     },
     {
       key: 'openExceptions',
@@ -151,7 +102,6 @@ const cards = computed(() => {
       displayValue: Number(props.metrics.openExceptions || 0).toLocaleString(),
       icon: 'mdi-alert-circle',
       accent: 'error',
-      ...openExceptionsTrend,
     },
   ];
 });
@@ -161,7 +111,7 @@ const cards = computed(() => {
 .kpi-card {
   position: relative;
   overflow: hidden;
-  min-height: 172px;
+  min-height: 142px;
   cursor: pointer;
   border: 1px solid rgba(27, 42, 74, 0.08);
   background:
