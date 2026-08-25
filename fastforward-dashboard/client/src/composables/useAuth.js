@@ -12,7 +12,7 @@ export function useAuth() {
     loading.value = true;
     error.value = null;
     try {
-      const { data } = await api.post('/auth/login', { username, password });
+      const { data } = await api.post('/api/auth/login', { username, password });
       localStorage.setItem('ff-token', data.token);
       localStorage.setItem('ff-user', JSON.stringify(data.user));
       user.value = data.user;
