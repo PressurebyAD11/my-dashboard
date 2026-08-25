@@ -1,20 +1,22 @@
 {
   "version": 2,
-  "routes": [
+  "builds": [
     {
-      "src": "/auth/(.*)",
-      "dest": "fastforward-dashboard/server/index.js"
+      "src": "client/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     },
     {
-      "src": "/api/(.*)",
-      "dest": "fastforward-dashboard/server/index.js"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "fastforward-dashboard/client/dist/index.html"
+      "src": "server/index.js",
+      "use": "@vercel/node"
     }
+  ],
+  "routes": [
+    { "src": "/auth/(.*)", "dest": "server/index.js" },
+    { "src": "/api/(.*)", "dest": "server/index.js" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "client/dist/index.html" }
   ]
 }
