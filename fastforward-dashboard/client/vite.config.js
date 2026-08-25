@@ -5,8 +5,11 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     proxy: {
+      '/api/auth': {
+        target: 'http://localhost:3001',
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
       '/api': 'http://localhost:3001',
-      '/auth': 'http://localhost:3001',
     },
   },
 });
