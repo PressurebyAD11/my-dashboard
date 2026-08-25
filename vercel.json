@@ -17,6 +17,6 @@
     { "src": "/auth/(.*)", "dest": "server/index.js" },
     { "src": "/api/(.*)", "dest": "server/index.js" },
     { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "client/dist/index.html" }
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
