@@ -1,6 +1,6 @@
 const SESSION_TOKEN = 'ff-session-token-2026';
 
-module.exports = (req, res, next) => {
+export const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization || '';
   const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
 

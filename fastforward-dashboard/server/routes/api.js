@@ -1,71 +1,133 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const authMiddleware = require('../middleware/authMiddleware');
+import { Router } from 'express';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import { authMiddleware } from '../middleware/authMiddleware.js';
 
-const router = express.Router();
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const router = Router();
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 router.use(authMiddleware);
 
-const loadData = (file) => {
-  const filePath = path.join(__dirname, '..', 'data', file);
-  return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+const loadData = (file) =>
+  JSON.parse(readFileSync(join(__dirname, '..', 'data', file), 'utf-8'));
+
+const normalizeRegion = (value) => String(value || '').toLowerCase();
+
+const getCutoff = (days) => {
+  const numericDays = Number(days);
+  if (!Number.isFinite(numericDays) || numericDays <= 0) return null;
+  return new Date(Date.now() - (numericDays * DAY_MS));
+};
+
+const filterShipments = (shipments, { region, days }) => {
+  const cutoff = getCutoff(days);
+  let filtered = shipments;
+
+  if (region && region !== 'all') {
+    const normalizedRegion = normalizeRegion(region);
+    filtered = filtered.filter((shipment) => normalizeRegion(shipment.region) === normalizedRegion);
+  }
+
+  if (cutoff) {
+    filtered = filtered.filter((shipment) => new Date(shipment.createdAt) >= cutoff);
+  }
+
+  return filtered;
+};
+
+const filterExceptions = (exceptions, { status, region, days }) => {
+  const cutoff = getCutoff(days);
+  let filtered = exceptions;
+
+  if (status && status !== 'all') {
+    filtered = filtered.filter((exception) => exception.status === status);
+  }
+
+  if (region && region !== 'all') {
+    const normalizedRegion = normalizeRegion(region);
+    filtered = filtered.filter((exception) => normalizeRegion(exception.region) === normalizedRegion);
+  }
+
+  if (cutoff) {
+    filtered = filtered.filter((exception) => new Date(exception.createdAt) >= cutoff);
+  }
+
+  return filtered;
+};
+
+const computeOnTimeRate = (shipments) => {
+  const delivered = shipments.filter((shipment) => shipment.status === 'delivered');
+  if (!delivered.length) return 0;
+
+  const onTime = delivered.filter((shipment) => new Date(shipment.actualDelivery) <= new Date(shipment.scheduledDelivery));
+  return Number(((onTime.length / delivered.length) * 100).toFixed(1));
+};
+
+const computeAvgTransitDays = (shipments) => {
+  const delivered = shipments.filter((shipment) => shipment.status === 'delivered' && shipment.actualDelivery);
+  if (!delivered.length) return 0;
+
+  const totalDays = delivered.reduce((sum, shipment) => {
+    const transitMs = new Date(shipment.actualDelivery).getTime() - new Date(shipment.createdAt).getTime();
+    return sum + (transitMs / DAY_MS);
+  }, 0);
+
+  return Number((totalDays / delivered.length).toFixed(1));
 };
 
 router.get('/shipments', (req, res) => {
   const shipments = loadData('shipments.json');
-  const { region, days } = req.query;
-  let filtered = shipments;
-
-  if (region && region !== 'all') {
-    filtered = filtered.filter((s) => s.region.toLowerCase() === String(region).toLowerCase());
-  }
-
-  if (days) {
-    const dayCount = Number(days);
-    const cutoff = new Date(Date.now() - dayCount * 24 * 60 * 60 * 1000);
-    filtered = filtered.filter((s) => new Date(s.createdAt) >= cutoff);
-  }
-
-  res.json(filtered);
+  res.json(filterShipments(shipments, req.query));
 });
 
-router.get('/regions', (_req, res) => {
-  res.json(loadData('regions.json'));
+router.get('/regions', (req, res) => {
+  const regionMeta = loadData('regions.json');
+  const shipments = filterShipments(loadData('shipments.json'), req.query);
+  const openExceptions = filterExceptions(loadData('exceptions.json'), {
+    ...req.query,
+    status: 'open',
+  });
+  const requestedRegion = normalizeRegion(req.query.region);
+
+  const rows = regionMeta
+    .filter((region) => requestedRegion === '' || requestedRegion === 'all' || region.id === requestedRegion)
+    .map((region) => {
+      const regionShipments = shipments.filter((shipment) => normalizeRegion(shipment.region) === region.id);
+      const regionExceptions = openExceptions.filter((exception) => normalizeRegion(exception.region) === region.id);
+
+      return {
+        id: region.id,
+        name: region.name,
+        totalShipments: regionShipments.length,
+        onTimeRate: computeOnTimeRate(regionShipments),
+        avgTransitDays: computeAvgTransitDays(regionShipments),
+        openExceptions: regionExceptions.length,
+      };
+    });
+
+  res.json(rows);
 });
 
 router.get('/exceptions', (req, res) => {
   const exceptions = loadData('exceptions.json');
-  const { status, region } = req.query;
-  let filtered = exceptions;
-
-  if (status && status !== 'all') {
-    filtered = filtered.filter((e) => e.status === status);
-  }
-
-  if (region && region !== 'all') {
-    filtered = filtered.filter((e) => e.region.toLowerCase() === String(region).toLowerCase());
-  }
-
-  res.json(filtered);
+  res.json(filterExceptions(exceptions, req.query));
 });
 
-router.get('/kpis', (_req, res) => {
-  const shipments = loadData('shipments.json');
-  const exceptions = loadData('exceptions.json');
-  const delivered = shipments.filter((s) => s.status === 'delivered');
-  const onTime = delivered.filter(
-    (s) => new Date(s.actualDelivery) <= new Date(s.scheduledDelivery)
-  );
+router.get('/kpis', (req, res) => {
+  const shipments = filterShipments(loadData('shipments.json'), req.query);
+  const openExceptions = filterExceptions(loadData('exceptions.json'), {
+    ...req.query,
+    status: 'open',
+  });
 
   res.json({
     totalShipments: shipments.length,
-    onTimeRate: delivered.length
-      ? ((onTime.length / delivered.length) * 100).toFixed(1)
-      : 0,
-    avgTransitDays: 2.7,
-    openExceptions: exceptions.filter((e) => e.status === 'open').length,
+    onTimeRate: computeOnTimeRate(shipments),
+    avgTransitDays: computeAvgTransitDays(shipments),
+    openExceptions: openExceptions.length,
   });
 });
 
-module.exports = router;
+export default router;
